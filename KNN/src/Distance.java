@@ -22,44 +22,49 @@ public class Distance {
 	public double getDistance(){
 		//System.out.println("appel de la distance");
 		double distance = 0.0;
-		for(Attribute a : allAttributes){
-			//System.out.println("parcourt de pour l'attribut : "+a.getName()+" de type : "+a.getValue().getName());
-			if(a.getValue().getName() == "java.lang.String"){
-				
-				//System.out.println("vrai string");
-				distance += StringType((Valeur)p1.getHash().get(a),(Valeur)p2.getHash().get(a));
-				//System.out.println("valeur tempo: "+distance+" a l'attribute "+a.getName());
-			}
-			if(a.getValue().getName() == "java.util.List"){
-				
-				//ystem.out.println("vrai list");
-				if(a.isRank()){
-					//System.out.println("vrai rank");
-					distance += rankType(p1,p2,(Valeur)p1.getHash().get(a),(Valeur)p2.getHash().get(a),a);
-
-					//System.out.println("valeur tempo: "+distance+" a l'attribute "+a.getName());
+			for(Attribute a : allAttributes){
+				if(!a.getName().equalsIgnoreCase(Loader.getAttributeclasse().getName())){
+				//System.out.println("parcourt de pour l'attribut : "+a.getName()+" de type : "+a.getValue().getName());
+					if(a.getValue().getName() == "java.lang.String"){
+						
+						//System.out.println("vrai string");
+						distance += StringType((Valeur)p1.getHash().get(a),(Valeur)p2.getHash().get(a));
+						//System.out.println("valeur tempo: "+distance+" a l'attribute "+a.getName());
+					}
+					if(a.getValue().getName() == "java.util.List"){
+						
+						//ystem.out.println("vrai list");
+						if(a.isRank()){
+							//System.out.println("vrai rank");
+							distance += rankType(p1,p2,(Valeur)p1.getHash().get(a),(Valeur)p2.getHash().get(a),a);
+		
+							//System.out.println("valeur tempo: "+distance+" a l'attribute "+a.getName());
+						}else{
+							//System.out.println("faux rank");
+							distance += ListType((Valeur)p1.getHash().get(a),(Valeur)p2.getHash().get(a));
+							//System.out.println("valeur tempo: "+distance+" a l'attribute "+a.getName());
+						}
+						
+					}
+					if(a.getValue().getName() == "java.lang.Float"){
+						
+						//System.out.println("vrai float");
+						distance += floatType((Valeur) p1.getHash().get(a),(Valeur)p2.getHash().get(a), a);
+						//System.out.println("valeur tempo: "+distance+" a l'attribute "+a.getName());
+					}
+					if(a.getValue().getName() =="java.lang.Integer"){
+						
+						if(a.isBool()){
+							distance += booleanType((Valeur) p1.getHash().get(a),(Valeur)p2.getHash().get(a));
+						}else{
+							distance += intType((Valeur) p1.getHash().get(a),(Valeur)p2.getHash().get(a), a);
+						}
+					}
 				}else{
-					//System.out.println("faux rank");
-					distance += ListType((Valeur)p1.getHash().get(a),(Valeur)p2.getHash().get(a));
-					//System.out.println("valeur tempo: "+distance+" a l'attribute "+a.getName());
-				}
-				
-			}
-			if(a.getValue().getName() == "java.lang.Float"){
-				
-				//System.out.println("vrai float");
-				distance += floatType((Valeur) p1.getHash().get(a),(Valeur)p2.getHash().get(a), a);
-				//System.out.println("valeur tempo: "+distance+" a l'attribute "+a.getName());
-			}
-			if(a.getValue().getName() =="java.lang.Integer"){
-				
-				if(a.isBool()){
-					distance += booleanType((Valeur) p1.getHash().get(a),(Valeur)p2.getHash().get(a));
-				}else{
-					distance += intType((Valeur) p1.getHash().get(a),(Valeur)p2.getHash().get(a), a);
+					
 				}
 			}
-		}
+		
 		return Math.sqrt(distance);
 	}
 

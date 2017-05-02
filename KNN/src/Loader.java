@@ -27,6 +27,7 @@ public class Loader {
 	private BufferedInputStream fis;
 	private List<Attribute> listAttribute = new ArrayList<Attribute>();
 	private List<Point> points = new ArrayList<Point>();
+	private static Attribute Attributeclasse;
 	
 	public Loader(final String pathname) {
 		init(pathname);
@@ -203,6 +204,22 @@ public class Loader {
 				}
 				
 		    }
+			boolean classe = false;
+			Scanner scan = new Scanner(System.in);
+			while(!classe){
+				for(Attribute t : listAttribute){
+					System.out.println(t.getName()+" "+t.getValue()+" "+t.getPossibility().toString());
+				}
+				System.out.println("parmis la liste des attributs ci-dessus, choississez l'attribut qui servira comme classe en écrivant son nom");
+				String s = scan.nextLine();
+				for(Attribute t : listAttribute){
+					if(t.getName().equalsIgnoreCase(s)){
+						Attributeclasse = t;
+						classe = true;
+						break;
+					}
+				}
+			}
 			// affiche tous les attributs
 			/*for(Attribute t : listAttribute){
 				System.out.println(t.getName()+" "+t.getValue()+" "+t.getPossibility().toString());
@@ -270,6 +287,20 @@ public class Loader {
 	 */
 	public synchronized void setListAttribute(List<Attribute> listAttribute) {
 		this.listAttribute = listAttribute;
+	}
+
+	/**
+	 * @return the attributeclasse
+	 */
+	public static Attribute getAttributeclasse() {
+		return Attributeclasse;
+	}
+
+	/**
+	 * @param attributeclasse the attributeclasse to set
+	 */
+	public void setAttributeclasse(Attribute attributeclasse) {
+		Attributeclasse = attributeclasse;
 	}
 
 }

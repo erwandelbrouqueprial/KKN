@@ -49,16 +49,20 @@ public class Knn {
 			for(int j = 0 ; j < matrices.get(nouveauPoint.get(i)).size();j++){
 				if(j < tolerance ){
 						tableauEntier[j] = matrices.get(nouveauPoint.get(i)).get(j).getDistance();
-						System.out.println("j: "+j+" "+tableauEntier[j]+" d: "+matrices.get(nouveauPoint.get(i)).get(j).getDistance() );
+						System.out.println("j: "+j+" "+tableauEntier[j]);
 				}else{
 					Arrays.sort(tableauEntier);
-					System.out.println(tableauEntier[0]+" "+tableauEntier[1]);
+					System.out.println("itération: "+j+" "+tableauEntier[0]+" "+tableauEntier[1]);
 					for(int e = 0 ; e < tableauEntier.length ; e++){
 						if(matrices.get(nouveauPoint.get(i)).get(j).getDistance() < tableauEntier[e]){
 							if(tableauEntier[e]<tableauEntier[tableauEntier.length-1]){
 								tableauEntier[tableauEntier.length-1] = tableauEntier[e];
+								tableauEntier[e] = matrices.get(nouveauPoint.get(i)).get(j).getDistance();
+								System.out.println("itération: "+j+" "+tableauEntier[0]+" "+tableauEntier[1]);
+								break;
+							}else{
+								tableauEntier[e] = matrices.get(nouveauPoint.get(i)).get(j).getDistance();
 							}
-							tableauEntier[e] = matrices.get(nouveauPoint.get(i)).get(j).getDistance();
 						}
 					}
 				}
@@ -82,6 +86,9 @@ public class Knn {
 		for(Point p : nouveauPoint){
 			System.out.println("les plus proches voisin de "+p.getNum()+" sont "+kplusproche.get(p).size());
 			System.out.println(kplusproche.get(p).toString());
+			for(Point cp : kplusproche.get(p)){
+				System.out.println("valeur de la classe que nous cherchons du voisin:"+cp.getNum()+" : "+cp.getHash().get(Loader.getAttributeclasse()).getValeur());
+			}
 		}
 	}
 	
