@@ -23,5 +23,19 @@ public class Ligne {
 		}
 		return printer;
 	}
+
+	/**
+	 * @return the pos
+	 */
+	public int getPos() {
+		return pos;
+	}
+
+	/**
+	 * @param pos the pos to set
+	 */
+	public void setPos(int pos) {
+		this.pos = pos;
+	}
 	
 }

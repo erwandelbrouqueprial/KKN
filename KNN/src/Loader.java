@@ -179,9 +179,32 @@ public class Loader {
 				System.out.println(t.getName()+" "+t.getValue()+" "+t.getPossibility().toString());
 			}
 			// affiche toutes les lignes ! 
-			for(Ligne l : lignes){
-				 System.out.println("[LIGNE]: "+l.getValues().toString());
+			Point p1 = new Point("newA");
+			Point p2 = new Point("newB");
+			/*for(Ligne l : lignes){
+				 //System.out.println("[LIGNE]: "+l.getValues().toString());
+			}*/
+			for(Valeur v: lignes.get(0).getValues()){
+				for(Attribute a : listAttribute){
+					p1.addIntoHash(a, v);
+				}
 			}
+			
+			for(Attribute a : listAttribute){
+				System.out.println(a.getName()+" "+p1.getHash().get(a));
+			}
+		
+			for(Valeur v: lignes.get(1).getValues()){
+				System.out.println(v.toString());
+				for(Attribute a : listAttribute){
+					p1.addIntoHash(a, v);
+				}
+			}
+			for(Attribute a : listAttribute){
+				System.out.println(a.getName()+" "+((Valeur)p2.getHash().get(a)).toString());
+			}
+			//Distance d = new Distance(p1, p2, listAttribute);
+			//System.out.println("distance: "+d.getDistance());
 		} catch (IOException e) {
 			System.err.println("Tentative de lecture échouée");
 			System.exit(-1);

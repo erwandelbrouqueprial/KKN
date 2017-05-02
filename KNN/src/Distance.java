@@ -20,41 +20,64 @@ public class Distance {
 	}
 
 	public double getDistance(){
+		double distance = 0.0;
 		for(Attribute a : allAttributes){
 			p1.getHash().get(a);
 			p2.getHash().get(a);
 			if( a.getValue().getName() == "java.lang.String"){
-				return StringType((Valeur)p1.getHash().get(a).getValeur(),(Valeur)p2.getHash().get(a).getValeur());
+				distance += StringType((Valeur)p1.getHash().get(a),(Valeur)p2.getHash().get(a));
 			}else if(a.getValue().toString() == "java.util.List"){
-				
+				if(a.isRank()){
+					distance += rankType(p1,p2,(Valeur)p1.getHash().get(a),(Valeur)p2.getHash().get(a),a);
+				}else{
+					distance += StringType((Valeur)p1.getHash().get(a),(Valeur)p2.getHash().get(a));
+				}
 			}else if(a.getValue().getName() == "java.lang.Float"){
-				
+				distance += floatType((Valeur) p1.getHash().get(a),(Valeur)p2.getHash().get(a), a);
+			}else if(a.getValue().getName() =="java.lang.Integer"){
+				if(a.isBool()){
+					distance += booleanType((Valeur) p1.getHash().get(a),(Valeur)p2.getHash().get(a));
+				}else{
+					distance += intType((Valeur) p1.getHash().get(a),(Valeur)p2.getHash().get(a), a);
+				}
 			}
 		}
-		return 0.0;
+		return Math.sqrt(distance);
 	}
-	
+
+	private double rankType(Point p1, Point p2,Valeur a, Valeur b,Attribute a1) {
+		double i = Math.pow((((a1.getRankOfValues((String)b.getValeur()))-(a1.getRankOfValues((String)a.getValeur())))/((a1.getRankOfValues(a1.getLastIndex()))-(a1.getRankOfValues(a1.getFirstIndex())))),2);
+		return i;
+	}
+
 	public double StringType(Valeur v1, Valeur v2){
-		if(v1.getValeur().toString() != v2.getValeur().toString()){
-			return 1.0;
+		if(v1.toString()!= v2.toString()){
+			return Math.pow(1.0,2);
 		}
-		return 0.0;
+		return Math.pow(0.0,2);
 	}
 	
-	public double BooleanType(Valeur v1, Valeur v2){
+	public double booleanType(Valeur v1, Valeur v2){
 		if(v1.getValeur().toString() != v2.getValeur().toString()){
-			return 1.0;
+			return Math.pow(1.0,2);
 		}
-		return 0.0;
+		return Math.pow(0.0,2);
 	}
 	
 	public double ListType(Valeur v1, Valeur v2){
 		if(v1.getValeur().toString() != v2.getValeur().toString()){
-			return 1.0;
+			return Math.pow(1.0,2);
 		}
-		return 0.0;
+		return Math.pow(0.0,2);
+	}
+	
+	public double floatType(Valeur v1, Valeur v2, Attribute a){
+		return Math.pow((((float)v2.getValeur())-((float)v1.getValeur())/((a.getMaxFloat())-(a.getMinFloat()))),2);
 	}
 
+	public double intType(Valeur v1, Valeur v2, Attribute a){
+		return Math.pow(((((int)v2.getValeur())-((int)v1.getValeur()))/((a.getMaxInt())-(a.getMinInt()))),2);
+	}
 	
 	
 	
