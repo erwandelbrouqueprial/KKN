@@ -210,8 +210,11 @@ public class Loader {
 				for(Attribute t : listAttribute){
 					System.out.println(t.getName()+" "+t.getValue()+" "+t.getPossibility().toString());
 				}
-				System.out.println("parmis la liste des attributs ci-dessus, choississez l'attribut qui servira comme classe en écrivant son nom");
+				System.out.println("parmis la liste des attributs ci-dessus, choississez l'attribut qui servira comme classe en écrivant son nom sinon écrire non");
 				String s = scan.nextLine();
+				if(s.equalsIgnoreCase("non")){
+					classe = true;
+				}
 				for(Attribute t : listAttribute){
 					if(t.getName().equalsIgnoreCase(s)){
 						Attributeclasse = t;
@@ -293,6 +296,10 @@ public class Loader {
 	 * @return the attributeclasse
 	 */
 	public static Attribute getAttributeclasse() {
+		if(Attributeclasse == null){
+			Attribute a = new Attribute("toto",String.class);
+			return a;
+		}
 		return Attributeclasse;
 	}
 

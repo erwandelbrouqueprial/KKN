@@ -40,10 +40,20 @@ public class Main {
 			break;
 		}
 		List<Point> l = new ArrayList<Point>();
-		System.out.println(" entrez un nouveau point:");
+		System.out.println(" entrez un nombre de cluster:");
+		int nbClust = 0;
+		for (;;) {
+			if (!scan.hasNextInt()) {
+				System.out.println(" Entrez uniquement un entier: ");
+				scan.next(); // discard
+				continue;
+			}
+			nbClust = scan.nextInt();
+			break;
+		}
 		boolean finish = false;
 		int cmp = 0;
-		while(!finish){
+		/*while(!finish){
 			cmp++;
 			List<Valeur> va = new ArrayList<Valeur>();
 			for(Attribute a : load.getListAttribute()){
@@ -143,8 +153,8 @@ public class Main {
 				finish = true;
 			}
 			
-		}
-		Knn knn = new Knn(load.getPoints(), tolerance,l,load.getListAttribute());
+		}*/
+		Knn knn = new Knn(load.getPoints(), tolerance,load.getListAttribute(),nbClust);
 		knn.run();
 	}
 	/**

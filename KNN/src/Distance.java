@@ -22,9 +22,10 @@ public class Distance {
 	public double getDistance(){
 		//System.out.println("appel de la distance");
 		double distance = 0.0;
+		System.out.println("DISTANCE ENTRE "+p1.getNum()+" ET "+p2.getNum());
 			for(Attribute a : allAttributes){
 				if(!a.getName().equalsIgnoreCase(Loader.getAttributeclasse().getName())){
-				//System.out.println("parcourt de pour l'attribut : "+a.getName()+" de type : "+a.getValue().getName());
+				//System.out.println("parcours de l'attribut : "+a.getName()+" de type : "+a.getValue().getName());
 					if(a.getValue().getName() == "java.lang.String"){
 						
 						//System.out.println("vrai string");
@@ -33,7 +34,7 @@ public class Distance {
 					}
 					if(a.getValue().getName() == "java.util.List"){
 						
-						//ystem.out.println("vrai list");
+						//System.out.println("vrai list");
 						if(a.isRank()){
 							//System.out.println("vrai rank");
 							distance += rankType(p1,p2,(Valeur)p1.getHash().get(a),(Valeur)p2.getHash().get(a),a);
@@ -125,7 +126,7 @@ public class Distance {
 	 */
 	public double floatType(Valeur v1, Valeur v2, Attribute a){
 		//System.out.println("v1: "+ (v1.getValeur())+" v2: "+v2.getValeur()+" max: "+a.getMaxFloat()+" min : "+a.getMinFloat());
-		return Math.pow((((Float)v2.getValeur())-((Float)v1.getValeur())/((a.getMaxFloat())-(a.getMinFloat()))),2);
+		return Math.pow(((((Float)v2.getValeur())-((Float)v1.getValeur()))/((a.getMaxFloat())-(a.getMinFloat()))),2);
 	}
 
 	/**

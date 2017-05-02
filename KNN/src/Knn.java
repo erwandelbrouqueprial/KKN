@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 public class Knn {
 
@@ -11,6 +12,7 @@ public class Knn {
 	private List<Attribute> allAttribute;
 	private HashMap<Point,ArrayList<Distance>> matrices;
 	private HashMap<Point,ArrayList<Point>> kplusproche;
+	private int nbClust;
 
 	public Knn(final List<Point> allDataPoint, final int tolerance) {
 		this.allDataPoint = allDataPoint;
@@ -33,28 +35,105 @@ public class Knn {
 		
 	}
 
+	public Knn(List<Point> allDataPoint, int tolerance, List<Attribute> allAttribute, int nbClust) {
+		this.allDataPoint = allDataPoint;
+		this.tolerance = tolerance;
+		this.allAttribute = allAttribute;
+		this.nouveauPoint = new ArrayList<Point>();
+		this.matrices = new HashMap<Point,ArrayList<Distance>>();
+		this.kplusproche = new HashMap<Point,ArrayList<Point>>();
+		this.nbClust = nbClust;
+		
+	}
+
 	public void run(){
-		//pour chaque nouveauPoint on calcul la distance entre celui-ci et l'ensemble des points du jeu de donnée
-		for(Point newP : nouveauPoint){
-			for(Point p : allDataPoint){
-				Distance d = new Distance(newP, p, allAttribute);
-				System.out.println(d.getDistance());
-				matrices.get(newP).add(d);
-				
+		ArrayList<Integer> randoms = new ArrayList<Integer>();
+		for(int i = 0 ; i <nbClust ; i++){
+			boolean t =false;
+			while(t == false){
+				Random r = new Random();
+				int result = r.nextInt(allDataPoint.size()-1);
+				if(!randoms.contains(result)){
+					randoms.add(result);
+					System.out.println(result);
+					nouveauPoint.add(allDataPoint.get(result));
+					t = true;
+				}
 			}
 		}
+		for(Point p : nouveauPoint){
+			this.matrices.put(p, new ArrayList<Distance>());
+			this.kplusproche.put(p, new ArrayList<Point>());
+			
+		}
+		for(Point newP : nouveauPoint){
+			for(Point p : allDataPoint){
+					Distance d = new Distance(newP, p, allAttribute);
+					System.out.println("distance entre "+newP.getNum()+" et "+p.getNum()+" : "+d.getDistance());
+					matrices.get(newP).add(d);
+				
+				
+			}
+			System.out.println(" ");
+		}
 		int i = 0;
+		int nv = 0;
+		int nvb =0;
 		while(i < matrices.size()){
-			double tableauEntier[] = new double[tolerance];
-			for(int j = 0 ; j < matrices.get(nouveauPoint.get(i)).size();j++){
-				if(j < tolerance ){
-						tableauEntier[j] = matrices.get(nouveauPoint.get(i)).get(j).getDistance();
-						System.out.println("j: "+j+" "+tableauEntier[j]);
-				}else{
-					Arrays.sort(tableauEntier);
+			if((i+1)< matrices.size()){
+				while(nv <matrices.get(nouveauPoint.get(i)).size() && nvb < matrices.get(nouveauPoint.get((i+1))).size() ){
+					System.out.println(matrices.get(nouveauPoint.get(i)).get(nv).getP2().getNum()+" "+matrices.get(nouveauPoint.get((i+1))).get((nvb)).getP2().getNum());
+					
+					if(matrices.get(nouveauPoint.get(i)).get(nv).getDistance() < matrices.get(nouveauPoint.get((i+1))).get(nvb).getDistance()){
+						matrices.get(nouveauPoint.get((i+1))).remove(nvb);
+						nv++;
+					}else if(matrices.get(nouveauPoint.get(i)).get(nv).getDistance() > matrices.get(nouveauPoint.get((i+1))).get(nvb).getDistance()){
+						matrices.get(nouveauPoint.get(i)).remove(nv);
+						nvb++;
+					}
+				}
+				/*for(nv = 0 ; nv < allDataPoint.size(); nv++){
+					System.out.println(matrices.get(nouveauPoint.get(i)).get(nv).getP2().getNum()+" "+matrices.get(nouveauPoint.get((i+1))).get((nv)).getP2().getNum());
+					
+					if(matrices.get(nouveauPoint.get(i)).get(nv).getDistance() < matrices.get(nouveauPoint.get((i+1))).get(nv).getDistance()){
+						matrices.get(nouveauPoint.get((i+1))).remove(nv);
+					}else if(matrices.get(nouveauPoint.get(i)).get(nv).getDistance() > matrices.get(nouveauPoint.get((i+1))).get(nv).getDistance()){
+						matrices.get(nouveauPoint.get(i)).remove(nv);
+					}
+					
+				}*/
+				i++;
+			}else{
+				break;
+			}
+		}
+		for(Point newP : nouveauPoint){
+			System.out.println("les plus proches voisins de "+newP.getNum()+" sont: ");
+			for(int j = 0 ; j < matrices.get(newP).size(); j++){
+				System.out.println(matrices.get(newP).get(j).getP2());
+			}
+		
+		}
+		for(Point newP : nouveauPoint){
+			
+			/*double []tableauDistance = new double[allDataPoint.size()-1];
+			for(int i = 0 ; i < allDataPoint.size()-1 ; i++){
+				tableauDistance[i]=matrices.get(newP).get(i).getDistance();
+			}
+			
+			Arrays.sort(tableauDistance);
+			System.out.println(newP.getNum());
+			for(int i = 0 ; i < allDataPoint.size()-1 ; i++){
+				System.out.println(tableauDistance[i]);
+			}*/
+		}
+		
+		/*
+		 Arrays.sort(tableauEntier);
 					System.out.println("itération: "+j+" "+tableauEntier[0]+" "+tableauEntier[1]);
 					for(int e = 0 ; e < tableauEntier.length ; e++){
 						if(matrices.get(nouveauPoint.get(i)).get(j).getDistance() < tableauEntier[e]){
+							System.out.println(nouveauPoint.get(i).getNum()+" "+matrices.get(nouveauPoint.get(i)).get(j).getDistance());
 							if(tableauEntier[e]<tableauEntier[tableauEntier.length-1]){
 								tableauEntier[tableauEntier.length-1] = tableauEntier[e];
 								tableauEntier[e] = matrices.get(nouveauPoint.get(i)).get(j).getDistance();
@@ -64,32 +143,9 @@ public class Knn {
 								tableauEntier[e] = matrices.get(nouveauPoint.get(i)).get(j).getDistance();
 							}
 						}
-					}
-				}
-				
-			}
-			
-			for(int j  = 0 ; j < tableauEntier.length;j++){
-				System.out.println("distance plus proche: "+tableauEntier[j]+" j : "+j);
-				for(int z = 0 ; z < matrices.get(nouveauPoint.get(i)).size();z++){
-					if(matrices.get(nouveauPoint.get(i)).get(z).getDistance() == tableauEntier[j]){
-						System.out.println("TROUVER");
-						kplusproche.get(nouveauPoint.get(i)).add(matrices.get(nouveauPoint.get(i)).get(z).getP2());
-						System.out.println(matrices.get(nouveauPoint.get(i)).get(z).getP2());
-						break;
-					}
-				}
-			}
-			i++;
-		}
+					}*/
 		
-		for(Point p : nouveauPoint){
-			System.out.println("les plus proches voisin de "+p.getNum()+" sont "+kplusproche.get(p).size());
-			System.out.println(kplusproche.get(p).toString());
-			for(Point cp : kplusproche.get(p)){
-				System.out.println("valeur de la classe que nous cherchons du voisin:"+cp.getNum()+" : "+cp.getHash().get(Loader.getAttributeclasse()).getValeur());
-			}
-		}
+		
 	}
 	
 	/**
