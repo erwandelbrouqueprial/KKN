@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class Knn {
@@ -5,12 +8,83 @@ public class Knn {
 	private List<Point> nouveauPoint; // les points que l'utilisateur va définir pour trouver ses proches voisins.
 	private int tolerance; //le nombre de voisin plus proche necessaire à trouver.
 	private List<Point> allDataPoint; // les points des données;
-	
+	private List<Attribute> allAttribute;
+	private HashMap<Point,ArrayList<Distance>> matrices;
+	private HashMap<Point,ArrayList<Point>> kplusproche;
+
 	public Knn(final List<Point> allDataPoint, final int tolerance) {
 		this.allDataPoint = allDataPoint;
 		this.tolerance = tolerance;
 	}
 
+	public Knn(List<Point> allDataPoint, int tolerance, List<Point> l,List<Attribute> allAttribute) {
+		this.allDataPoint = allDataPoint;
+		this.tolerance = tolerance;
+		this.nouveauPoint = l;
+		this.allAttribute = allAttribute;
+		this.matrices = new HashMap<Point,ArrayList<Distance>>();
+		this.kplusproche = new HashMap<Point,ArrayList<Point>>();
+		
+		for(Point p : l){
+			this.matrices.put(p, new ArrayList<Distance>());
+			this.kplusproche.put(p, new ArrayList<Point>());
+			
+		}
+		
+	}
+
+	public void run(){
+		//pour chaque nouveauPoint on calcul la distance entre celui-ci et l'ensemble des points du jeu de donnée
+		for(Point newP : nouveauPoint){
+			for(Point p : allDataPoint){
+				Distance d = new Distance(newP, p, allAttribute);
+				System.out.println(d.getDistance());
+				matrices.get(newP).add(d);
+				
+			}
+		}
+		int i = 0;
+		while(i < matrices.size()){
+			double tableauEntier[] = new double[tolerance];
+			for(int j = 0 ; j < matrices.get(nouveauPoint.get(i)).size();j++){
+				if(j < tolerance ){
+						tableauEntier[j] = matrices.get(nouveauPoint.get(i)).get(j).getDistance();
+						System.out.println("j: "+j+" "+tableauEntier[j]+" d: "+matrices.get(nouveauPoint.get(i)).get(j).getDistance() );
+				}else{
+					Arrays.sort(tableauEntier);
+					System.out.println(tableauEntier[0]+" "+tableauEntier[1]);
+					for(int e = 0 ; e < tableauEntier.length ; e++){
+						if(matrices.get(nouveauPoint.get(i)).get(j).getDistance() < tableauEntier[e]){
+							if(tableauEntier[e]<tableauEntier[tableauEntier.length-1]){
+								tableauEntier[tableauEntier.length-1] = tableauEntier[e];
+							}
+							tableauEntier[e] = matrices.get(nouveauPoint.get(i)).get(j).getDistance();
+						}
+					}
+				}
+				
+			}
+			
+			for(int j  = 0 ; j < tableauEntier.length;j++){
+				System.out.println("distance plus proche: "+tableauEntier[j]+" j : "+j);
+				for(int z = 0 ; z < matrices.get(nouveauPoint.get(i)).size();z++){
+					if(matrices.get(nouveauPoint.get(i)).get(z).getDistance() == tableauEntier[j]){
+						System.out.println("TROUVER");
+						kplusproche.get(nouveauPoint.get(i)).add(matrices.get(nouveauPoint.get(i)).get(z).getP2());
+						System.out.println(matrices.get(nouveauPoint.get(i)).get(z).getP2());
+						break;
+					}
+				}
+			}
+			i++;
+		}
+		
+		for(Point p : nouveauPoint){
+			System.out.println("les plus proches voisin de "+p.getNum()+" sont "+kplusproche.get(p).size());
+			System.out.println(kplusproche.get(p).toString());
+		}
+	}
+	
 	/**
 	 * @return the allDataPoint
 	 */
@@ -56,5 +130,19 @@ public class Knn {
 	public void addPoint(Point p){
 		this.nouveauPoint.add(p);
 	}
-	
+
+	/**
+	 * @return the allAttribute
+	 */
+	public synchronized List<Attribute> getAllAttribute() {
+		return allAttribute;
+	}
+
+	/**
+	 * @param allAttribute the allAttribute to set
+	 */
+	public synchronized void setAllAttribute(List<Attribute> allAttribute) {
+		this.allAttribute = allAttribute;
+	}
+
 }

@@ -1,4 +1,5 @@
-import java.util.InputMismatchException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -20,7 +21,6 @@ public class Main {
 	public static void main(String[] args) {
 		Loader load = new Loader(args[0]); 
 		load.run();
-		/*
 		bool = false;
 		scan = new Scanner(System.in);
 		tolerance =0;
@@ -39,49 +39,101 @@ public class Main {
 	        }
 	        break;
 		}
-		
+		List<Point> l = new ArrayList<Point>();
 		System.out.println(" entrez un nouveau point:");
 		boolean finish = false;
+		int cmp = 0;
 		while(!finish){
-			double x = 0.0;
-			double y = 0.0;
-			for (;;) {
-				System.out.println("donnée sa coordonnée x:");
-				if (!scan.hasNextDouble()) {
-		            System.out.println(" Entrez uniquement un double: ");
-		            scan.next(); // discard
-		            continue;
-		        }
-		        x = scan.nextDouble();
-		        if ( x > 0.0) {
-
-		        } else {
-
-		        }
-		        break;
+			cmp++;
+			List<Valeur> va = new ArrayList<Valeur>();
+			for(Attribute a : load.getListAttribute()){
+				 
+				System.out.println("donnée la valeur pour l'attribut: "+a.getName());
+				if( a.getValue().getName() == "java.lang.String"){
+					System.out.println("type: string");
+					String s = scan.next();
+					Valeur v = new Valeur(s);
+					va.add(v);
+				}else if(a.getValue().getName() == "java.util.List"){
+					System.out.println("type: list");
+					String f = "";
+					boolean equal = false;
+					while(!equal){
+						System.out.println("choississez parmis une de ses possibilité: "+a.getPossibility());
+						f = scan.nextLine();
+						try{
+							for(int i = 0 ; i < a.getPossibility().size();i++){
+								if(a.getPossibility().get(i).equalsIgnoreCase(f)){
+									
+									equal = true;
+								}
+							}
+							System.out.println(f);
+							if(!equal){
+								System.out.println("cela ne fait pas partie du choix");
+								equal = false;
+							}
+						}catch(NumberFormatException e){
+							System.out.println("veuillez entrer un float");
+							equal = false;
+						}
+					}
+					Valeur v = new Valeur(f);
+					va.add(v);
+				}else if(a.getValue().getName() == "java.lang.Float"){
+					System.out.println("type: float");
+					Float val = new Float(0);
+					boolean equal = false;
+					while(!equal){
+						String f = scan.next();
+						try{
+							val = Float.parseFloat(f);
+							equal = true;
+						}catch(NumberFormatException e){
+							System.out.println("veuillez entrer un float");
+							equal = false;
+						}
+					}
+					Valeur v = new Valeur(val);
+					va.add(v);
+				}else if(a.getValue().getName() == "java.lang.Integer"){
+					System.out.println("type: integer");
+					Integer val = 0;
+					boolean equal = false;
+					while(!equal){
+						String f = scan.next();
+						try{
+							val = Integer.parseInt(f);
+							equal = true;
+						}catch(NumberFormatException e){
+							System.out.println("veuillez entrer un entier");
+							equal = false;
+						}
+					}
+					
+					Valeur v = new Valeur(val);
+					va.add(v);
+				}
 			}
-			for (;;) {
-				System.out.println("donnée sa coordonnée x:");
-				if (!scan.hasNextDouble()) {
-		            System.out.println(" Entrez uniquement un double: ");
-		            scan.next(); // discard
-		            continue;
-		        }
-		        y = scan.nextDouble();
-		        if ( y > 0.0) {
-
-		        } else {
-
-		        }
-		        break;
+			Point p = new Point("new"+cmp);
+			int i = 0;
+			System.out.println(va);
+			for(Valeur v: va){
+				System.out.println(v.toString());
+					p.addIntoHash(load.getListAttribute().get(i), v);
+					//System.out.println(a.getName()+" "+v.toString());
+				i++;
 			}
+			l.add(p);
 			System.out.println("si vous voulez poursuivre sans créer de nouveau point entrez 'terminer'");
 			String t = scan.next();
 			if(t.equalsIgnoreCase("terminer")){
 				finish = true;
 			}
 		}
-		*/
+		
+		Knn knn = new Knn(load.getPoints(), tolerance,l,load.getListAttribute());
+		knn.run();
 	}
 	/**
 	 * @return the bool

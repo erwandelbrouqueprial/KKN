@@ -80,4 +80,7 @@ public class Point {
 		this.x = x;
 	}
 	
+	public String toString(){
+		return num+" "+keyAttrVal;
+	}
 }
