@@ -129,82 +129,106 @@ public class Loader {
 							}
 							listAttribute.add(a);
 						}else if(tab[2].equalsIgnoreCase("REAL")){
-							Scanner scan = new Scanner(System.in);
-							String val ="";
-							boolean rep = false;
-							while(rep == false){
-								System.out.println("entrez oui ou non si l'attribut "+name+" doit être considéré comme un booléen ");
-								val = scan.nextLine();
-								if(val.equalsIgnoreCase("oui") || val.equalsIgnoreCase("non")){
-									rep = true;
-								}
-							}
-							Attribute a = new Attribute(name, Integer.class);
-							if(val.equalsIgnoreCase("oui")){
-								a.setBool(true);
-							}
+							Attribute a = new Attribute(name, Float.class);
 							listAttribute.add(a);
 						}
 					}
 					
 				}
-				if(ligne.contains("@DATA")){
+				if(ligne.contains("@DATA") || ligne.contains("@data") || ligne.contains("@Data")){
 					data = true;
 					ligne = br.readLine();
 				}
+				
 				if(data == true){
+					if(!ligne.contains(",?,") || !ligne.contains("?,") ){
+						
 					Ligne currentLigne = new Ligne();
 					String[] tab = ligne.split(",");
-					for(int i = 0 ; i < tab.length;i++){	
-						for(Attribute a: listAttribute){
-							if( a.getValue().getName() == "java.lang.String"){
+					for(int i = 0 ; i < tab.length;i++){
+							if( listAttribute.get(i).getValue().getName() == "java.lang.String"){
+								
 								currentLigne.getValues().add(new Valeur(new String(tab[i])));
-								break;
-							}else if(a.getValue().toString() == "java.util.List"){
+								
+							}else if(listAttribute.get(i).getValue().getName() == "java.util.List"){
+								
 								currentLigne.getValues().add(new Valeur(new String(tab[i])));
-								break;
-							}else if(a.getValue().getName() == "java.lang.Float"){
+								
+							}else if(listAttribute.get(i).getValue().getName() == "java.lang.Float"){
+								System.out.println(""+tab[i]);
 								currentLigne.getValues().add(new Valeur(Float.parseFloat(tab[i])));
-								break;
+								
+								if(Float.parseFloat(tab[i]) > listAttribute.get(i).getMaxFloat()){
+									
+									System.out.println(Float.parseFloat(tab[i])+">"+listAttribute.get(i).getMaxFloat());
+									listAttribute.get(i).setMaxFloat(Float.parseFloat(tab[i]));
+									
+								}
+								if(Float.parseFloat(tab[i]) < listAttribute.get(i).getMinFloat()){
+									
+									System.out.println(Float.parseFloat(tab[i])+"<"+listAttribute.get(i).getMaxFloat());
+									listAttribute.get(i).setMinFloat(Float.parseFloat(tab[i]));
+									
+								}
+							}else if (listAttribute.get(i).getValue().getName() == "java.lang.Integer"){
+								currentLigne.getValues().add(new Valeur(Integer.parseInt(tab[i])));
+								
+								if(Integer.parseInt(tab[i]) > listAttribute.get(i).getMaxInt()){
+									
+									System.out.println(Integer.parseInt(tab[i])+">"+listAttribute.get(i).getMaxInt());
+									listAttribute.get(i).setMaxInt(Integer.parseInt(tab[i]));
+									
+								}
+								if(Integer.parseInt(tab[i]) < listAttribute.get(i).getMinInt()){
+									
+									System.out.println(Integer.parseInt(tab[i])+"<"+listAttribute.get(i).getMaxInt());
+									listAttribute.get(i).setMinInt(Integer.parseInt(tab[i]));
+									
+								}
 							}
-						}
+							//System.out.println("current ligne "+currentLigne.getValues()+" ");		
 					}
 					cmpLigneData++;
 					lignes.add(currentLigne);
 					//System.err.println(cmpLigneData+" [LIGNE]: "+ligne);
+					}
 				}
+				
 		    }
 			// affiche tous les attributs
-			for(Attribute t : listAttribute){
+			/*for(Attribute t : listAttribute){
 				System.out.println(t.getName()+" "+t.getValue()+" "+t.getPossibility().toString());
 			}
 			// affiche toutes les lignes ! 
+			for(Ligne l : lignes){
+				 System.out.println("[LIGNE]: "+l.getValues().toString());
+			}*/
+			
 			Point p1 = new Point("newA");
 			Point p2 = new Point("newB");
-			/*for(Ligne l : lignes){
-				 //System.out.println("[LIGNE]: "+l.getValues().toString());
-			}*/
+			int i = 0;
 			for(Valeur v: lignes.get(0).getValues()){
-				for(Attribute a : listAttribute){
-					p1.addIntoHash(a, v);
-				}
-			}
-			
-			for(Attribute a : listAttribute){
-				System.out.println(a.getName()+" "+p1.getHash().get(a));
-			}
-		
-			for(Valeur v: lignes.get(1).getValues()){
 				System.out.println(v.toString());
-				for(Attribute a : listAttribute){
-					p1.addIntoHash(a, v);
-				}
+					p1.addIntoHash(listAttribute.get(i), v);
+					//System.out.println(a.getName()+" "+v.toString());
+				i++;
 			}
+			i = 0;
+			for(Valeur v: lignes.get(1).getValues()){
+					p2.addIntoHash(listAttribute.get(i), v);
+					i++;
+					//System.out.println(a.getName()+" "+v.toString());
+			}
+			System.out.println("p1");
 			for(Attribute a : listAttribute){
-				System.out.println(a.getName()+" "+((Valeur)p2.getHash().get(a)).toString());
+				System.out.println(" key: "+a.getName()+" value: "+p1.getHash().get(a).toString());
 			}
-			//Distance d = new Distance(p1, p2, listAttribute);
-			//System.out.println("distance: "+d.getDistance());
+			System.out.println("p2");
+			for(Attribute a : listAttribute){
+				System.out.println(" key: "+a.getName()+" value: "+p2.getHash().get(a).toString());
+			}
+			Distance d = new Distance(p1, p2, listAttribute);
+			System.out.println("distance: "+d.getDistance());
 		} catch (IOException e) {
 			System.err.println("Tentative de lecture échouée");
 			System.exit(-1);

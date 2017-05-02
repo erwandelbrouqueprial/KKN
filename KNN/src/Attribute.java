@@ -16,10 +16,10 @@ public class Attribute {
 	private List<String> values;
 	private boolean rank;
 	private boolean isBool;
-	private float minFloat;
-	private float maxFloat;
-	private int maxInt;
-	private int MinInt;
+	private Float minFloat;
+	private Float maxFloat;
+	private Integer maxInt;
+	private Integer minInt;
 	
 	public Attribute(final String name, final Class<?> value) {
 		this.name = name;
@@ -27,10 +27,10 @@ public class Attribute {
 		this.values = new ArrayList<String>();
 		this.rank = false;
 		this.isBool = false;
-		this.minFloat = 0;
-		this.maxFloat = 0;
-		this.maxInt = 0;
-		this.MinInt = 0;
+		this.minFloat = new Float("99999999");
+		this.maxFloat = new Float(0);
+		this.minInt = new Integer("99999999");
+		this.maxInt = new Integer(0);
 	}
 	
 	public Attribute(final String name, final Class<?> value,final ArrayList<String>values,boolean rank) {
@@ -39,10 +39,10 @@ public class Attribute {
 		this.values = values;
 		this.rank = rank;
 		this.isBool = false;
-		this.minFloat = 0;
-		this.maxFloat = 0;
-		this.maxInt = 0;
-		this.MinInt = 0;
+		this.minFloat = new Float("99999999");
+		this.maxFloat = new Float(0);
+		this.minInt = new Integer("99999999");
+		this.maxInt = new Integer(0);
 	}
 
 	public Class<?> getValue() {
@@ -116,55 +116,55 @@ public class Attribute {
 		this.isBool = isBool;
 	}
 	
-	public String getLastIndex(){
-		return values.get(values.size());
+	public int getLastIndex(){
+		return values.size();
 	}
 	
 	public String getFirstIndex(){
 		return values.get(0);
 	}
 	
-	public float getMaxFloat(){
+	public Float getMaxFloat(){
 		return maxFloat;
 	}
 	
-	public void setMaxFloat(float i){
-		maxFloat = i;
+	public void setMaxFloat(Float i){
+		this.maxFloat = i;
 	}
 	
-	public float getMinFloat(){
+	public Float getMinFloat(){
 		return minFloat;
 	}
 	
-	public void setMinFloat(float i){
-		minFloat = i;
+	public void setMinFloat(Float i){
+		this.minFloat = i;
 	}
 
 	/**
 	 * @return the minInt
 	 */
-	public int getMinInt() {
-		return MinInt;
+	public Integer getMinInt() {
+		return minInt;
 	}
 
 	/**
 	 * @param minInt the minInt to set
 	 */
-	public void setMinInt(int minInt) {
-		MinInt = minInt;
+	public void setMinInt(Integer minInt) {
+		this.minInt = minInt;
 	}
 
 	/**
 	 * @return the maxInt
 	 */
-	public int getMaxInt() {
+	public Integer getMaxInt() {
 		return maxInt;
 	}
 
 	/**
 	 * @param maxInt the maxInt to set
 	 */
-	public void setMaxInt(int maxInt) {
+	public void setMaxInt(Integer maxInt) {
 		this.maxInt = maxInt;
 	}
 }
