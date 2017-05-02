@@ -43,7 +43,6 @@ public class Knn {
 		this.matrices = new HashMap<Point,ArrayList<Distance>>();
 		this.kplusproche = new HashMap<Point,ArrayList<Point>>();
 		this.nbClust = nbClust;
-		
 	}
 
 	public void run(){
@@ -60,6 +59,7 @@ public class Knn {
 					t = true;
 				}
 			}
+			System.out.println(nouveauPoint.get(i).getHash());
 		}
 		for(Point p : nouveauPoint){
 			this.matrices.put(p, new ArrayList<Distance>());
@@ -92,62 +92,94 @@ public class Knn {
 						nvb++;
 					}
 				}
-				/*for(nv = 0 ; nv < allDataPoint.size(); nv++){
-					System.out.println(matrices.get(nouveauPoint.get(i)).get(nv).getP2().getNum()+" "+matrices.get(nouveauPoint.get((i+1))).get((nv)).getP2().getNum());
-					
-					if(matrices.get(nouveauPoint.get(i)).get(nv).getDistance() < matrices.get(nouveauPoint.get((i+1))).get(nv).getDistance()){
-						matrices.get(nouveauPoint.get((i+1))).remove(nv);
-					}else if(matrices.get(nouveauPoint.get(i)).get(nv).getDistance() > matrices.get(nouveauPoint.get((i+1))).get(nv).getDistance()){
-						matrices.get(nouveauPoint.get(i)).remove(nv);
-					}
-					
-				}*/
 				i++;
 			}else{
 				break;
 			}
 		}
+		int []total = new int[nouveauPoint.size()];
+		int e = 0;
 		for(Point newP : nouveauPoint){
-			System.out.println("les plus proches voisins de "+newP.getNum()+" sont: ");
+			e = 0;
+			System.out.println("nombre des points plus prochent du cluster "+newP.getNum()+" est: ");
 			for(int j = 0 ; j < matrices.get(newP).size(); j++){
-				System.out.println(matrices.get(newP).get(j).getP2());
+				//System.out.println(matrices.get(newP).get(j).getP2());
+				e++;
 			}
-		
+			System.out.println(e);
 		}
-		for(Point newP : nouveauPoint){
-			
-			/*double []tableauDistance = new double[allDataPoint.size()-1];
-			for(int i = 0 ; i < allDataPoint.size()-1 ; i++){
-				tableauDistance[i]=matrices.get(newP).get(i).getDistance();
-			}
-			
-			Arrays.sort(tableauDistance);
-			System.out.println(newP.getNum());
-			for(int i = 0 ; i < allDataPoint.size()-1 ; i++){
-				System.out.println(tableauDistance[i]);
-			}*/
-		}
-		
-		/*
-		 Arrays.sort(tableauEntier);
-					System.out.println("itération: "+j+" "+tableauEntier[0]+" "+tableauEntier[1]);
-					for(int e = 0 ; e < tableauEntier.length ; e++){
-						if(matrices.get(nouveauPoint.get(i)).get(j).getDistance() < tableauEntier[e]){
-							System.out.println(nouveauPoint.get(i).getNum()+" "+matrices.get(nouveauPoint.get(i)).get(j).getDistance());
-							if(tableauEntier[e]<tableauEntier[tableauEntier.length-1]){
-								tableauEntier[tableauEntier.length-1] = tableauEntier[e];
-								tableauEntier[e] = matrices.get(nouveauPoint.get(i)).get(j).getDistance();
-								System.out.println("itération: "+j+" "+tableauEntier[0]+" "+tableauEntier[1]);
-								break;
-							}else{
-								tableauEntier[e] = matrices.get(nouveauPoint.get(i)).get(j).getDistance();
-							}
-						}
-					}*/
-		
 		
 	}
 	
+	public void runClasse(){
+		//pour chaque nouveauPoint on calcul la distance entre celui-ci et l'ensemble des points du jeu de donnée
+				for(Point newP : nouveauPoint){
+					for(Point p : allDataPoint){
+						Distance d = new Distance(newP, p, allAttribute);
+						System.out.println(d.getDistance());
+						matrices.get(newP).add(d);
+						
+					}
+				}
+				int i = 0;
+				while(i < matrices.size()){
+					double tableauEntier[] = new double[tolerance];
+					for(int j = 0 ; j < matrices.get(nouveauPoint.get(i)).size();j++){
+						if(j < tolerance ){
+								tableauEntier[j] = matrices.get(nouveauPoint.get(i)).get(j).getDistance();
+								System.out.println("j: "+j+" "+tableauEntier[j]);
+						}else{
+							Arrays.sort(tableauEntier);
+							System.out.println("itération: "+j+" "+tableauEntier[0]+" "+tableauEntier[1]);
+							for(int e = 0 ; e < tableauEntier.length ; e++){
+								if(matrices.get(nouveauPoint.get(i)).get(j).getDistance() < tableauEntier[e]){
+									if(tableauEntier[e]<tableauEntier[tableauEntier.length-1]){
+										tableauEntier[tableauEntier.length-1] = tableauEntier[e];
+										tableauEntier[e] = matrices.get(nouveauPoint.get(i)).get(j).getDistance();
+										System.out.println("itération: "+j+" "+tableauEntier[0]+" "+tableauEntier[1]);
+										break;
+									}else{
+										tableauEntier[e] = matrices.get(nouveauPoint.get(i)).get(j).getDistance();
+									}
+								}
+							}
+						}
+						
+					}
+					
+					for(int j  = 0 ; j < tableauEntier.length;j++){
+						System.out.println("distance plus proche: "+tableauEntier[j]+" j : "+j);
+						for(int z = 0 ; z < matrices.get(nouveauPoint.get(i)).size();z++){
+							if(matrices.get(nouveauPoint.get(i)).get(z).getDistance() == tableauEntier[j]){
+								System.out.println("TROUVER");
+								kplusproche.get(nouveauPoint.get(i)).add(matrices.get(nouveauPoint.get(i)).get(z).getP2());
+								System.out.println(matrices.get(nouveauPoint.get(i)).get(z).getP2());
+								break;
+							}
+						}
+					}
+					i++;
+				}
+				int []cmps = new int[Loader.getAttributeclasse().getPossibility().size()];
+				for(int t = 0 ; t <Loader.getAttributeclasse().getPossibility().size() ;t++){
+					cmps[t] = 0;
+				}
+				for(Point p : nouveauPoint){
+					System.out.println("les plus proches voisin de "+p.getNum()+" sont "+kplusproche.get(p).size());
+					System.out.println(kplusproche.get(p).toString());
+					
+					for(Point cp : kplusproche.get(p)){
+					
+						System.out.println("valeur de la classe que nous cherchons du voisin:"+cp.getNum()+" : "+cp.getHash().get(Loader.getAttributeclasse()).getValeur());
+						
+						cmps[Loader.getAttributeclasse().getPossibility().indexOf(cp.getHash().get(Loader.getAttributeclasse()).getValeur())]++;
+					}
+					for(int t = 0 ; t <Loader.getAttributeclasse().getPossibility().size() ;t++){
+						System.out.println(cmps[t]+" "+Loader.getAttributeclasse().getPossibility().get(t));
+					}
+				}
+				
+	}
 	/**
 	 * @return the allDataPoint
 	 */
